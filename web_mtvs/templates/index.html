@@ -71,21 +71,30 @@
             button:hover {
                 background-color: #0056b3;
             }
+            .navbar-logo {
+                width: 50px;  /* 원하는 너비로 변경 */
+                height: 50px; /* 원하는 높이로 변경 */
+                margin-right: 10px; /* 로고와 텍스트 사이의 간격 조절 */
+                vertical-align: middle; /* 이미지와 텍스트를 수직으로 중앙 정렬 */
+            }
         </style>
+
     </head>
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
             <div class="container">
-                <a class="navbar-brand" href="#page-top">인채</a>
+                <a class="navbar-brand" href="#page-top">
+                    <img src="static/assets/img/MTVS_logo_white.png" alt="mtvs" class="navbar-logo">MTVS
+                </a>
                 <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#chatbot">CHATBOT</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#ocr">OCR</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#ocr">CLEANER</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#CHATBOT">INQUIRY</a></li>
                         <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li> -->
                     </ul>
                 </div>
@@ -95,82 +104,21 @@
         <header class="masthead bg-primary text-white text-center">
             <div class="container d-flex align-items-center flex-column">
                 <!-- Masthead Avatar Image-->
-                <img class="masthead-avatar mb-5" src="static/assets/img/avataaars.svg" alt="..." />
+                <img class="masthead-avatar mb-5" src="static/assets/img/MTVS_logo_white.png" alt="..." />
                 <!-- Masthead Heading-->
-                <h1 class="masthead-heading text-uppercase mb-0">인채짱</h1>
-                <!-- Icon Divider-->
-                <div class="divider-custom divider-light">
-                    <div class="divider-custom-line"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-                    <div class="divider-custom-line"></div>
-                </div>
-                <!-- Masthead Subheading-->
-                <p class="masthead-subheading font-weight-light mb-0">AI Developer - JAVA Developer</p>
-            </div>
-        </header>
-        <!-- Portfolio Section-->
-        <section class="page-section portfolio" id="chatbot">
-            <div class="container">
-                <!-- Portfolio Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">CHATBOT</h2>
-                <!-- Icon Divider-->
-                <div class="divider-custom">
-                    <div class="divider-custom-line"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-                    <div class="divider-custom-line"></div>
-                </div>
-
-                <div class="text-center">
-                    <img class="img-fluid hover-effect" src="static/assets/img/portfolio/chatbot.png" alt="..." data-bs-toggle="modal" data-bs-target="#chatbotModal"/>
-                </div>
-                
-                <!-- 오른쪽 하단의 챗봇 버튼 -->
-                <button class="chatbot-button" data-bs-toggle="modal" data-bs-target="#chatbotModal">
-                    <i class="fas fa-comments"></i>
-                </button>
-    
-        </section>
-        <!-- Chatbot Modal -->
-        <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatbotModalLabel" aria-hidden="true">
-            <div class="modal-dialog fixed-right-bottom">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="chatbotModalLabel">인채's CHATBOT</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="chatbox"></div>
-                        <input type="text" id="userInput" placeholder="메시지를 입력하세요...">
-                        <button onclick="sendMessage()">전송</button>                            
-                    </div>                        
-                </div>
-            </div>
-        </div>
-        <section class="page-section bg-primary text-white mb-0" id="ocr">
-            <div class="container">
-                <!-- About Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-white">OCR</h2>
-                <!-- Icon Divider-->
-                <div class="divider-custom divider-light">
-                    <div class="divider-custom-line"></div>
-                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
-                    <div class="divider-custom-line"></div>
-                </div>
-                <!-- About Section Content-->
-                <div class="text-center mt-4">
-                    <h3 class="text-uppercase text-white">FREE OCR</h3>
-                </div>
+                <h1 class="masthead-heading text-uppercase mb-0">Banner Cleaner</h1>
                 <!-- upload -->
                 <div class="text-center mt-4">
-                    <a class="btn btn-xl btn-outline-light">
-                        <form id="imageUploadForm" enctype="multipart/form-data" action="/myhome/ocr" method="post">
-                            <input type="file" name="file" id="imageFile">
-                            <button type="submit"><i class="fas fa-upload me-2"></i>Upload</button>
-                        </form>
-                    </a>
+                    <form id="imageUploadForm" enctype="multipart/form-data" action="/myhome/ocr" method="post">
+                        <label for="imageFile" class="btn btn-xl btn-outline-light">
+                            <i class="fas fa-upload me-2"></i>
+                            Choose File <span id="fileName">No file chosen</span>
+                        </label>
+                        <input type="file" name="file" id="imageFile" style="display: none;" onchange="displayFileName(this)">
+                        <button type="submit">Upload</button>
+                    </form>
                     <!-- 로딩 표시 -->
-                    <div id="loading" style="display:none;"><i class="fa fa-spinner fa-spin"></i> 처리 중...</div>
-                </div>                
+                <div id="loading" style="display:none;"><i class="fa fa-spinner fa-spin"></i> 처리 중...</div>
             </div>
             <!-- OCR Result Modal -->
             <div class="modal fade" id="ocrResultModal" tabindex="-1" aria-labelledby="ocrResultModalLabel" aria-hidden="true">
@@ -187,9 +135,32 @@
                     </div>
                 </div>
             </div>
+                <!-- Masthead Subheading-->
+                <p class="masthead-subheading font-weight-light mb-0">Developed by JM, MS, JM, IC</p>
+            </div>
+        </header>
+                
+        <!-- 오른쪽 하단의 챗봇 버튼 -->
+        <button class="chatbot-button" data-bs-toggle="modal" data-bs-target="#chatbotModal">
+            <img src="D:/MTVS-AI/web_mtvs/web_mtvs/static/assets/img/portfolio/chatbot.png" alt="Chatbot" style="width: 35px;">
+        </button>
 
-        </section>
-
+        <!-- Chatbot Modal -->
+        <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatbotModalLabel" aria-hidden="true">
+            <div class="modal-dialog fixed-right-bottom">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="chatbotModalLabel">인채's CHATBOT</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="chatbox"></div>
+                        <input type="text" id="userInput" placeholder="메시지를 입력하세요...">
+                        <button onclick="sendMessage()">전송</button>                            
+                    </div>                        
+                </div>
+            </div>
+        </div>
                 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -198,7 +169,7 @@
         <script>
             $(document).ready(function() {
                 $("#userInput").on('keypress', function(e) {
-                    if(e.which == 13) {  // 13은 엔터키의 keyCode 입니다.
+                    if(e.which == 13) {  // 13은 엔터키의 keyCode
                         e.preventDefault();  // 기본 엔터키의 이벤트를 방지합니다 (예: 폼 제출)
                         sendMessage();
                     }
@@ -214,6 +185,12 @@
                 }).fail(function() {
                     $("#chatbox").append('<div>Error: 서버 응답 없음</div>');
                 });
+            }
+                // 파일 이름 표시 함수
+            function displayFileName(input) {
+                if (input.files && input.files[0]) {
+                    document.getElementById('fileName').textContent = input.files[0].name;
+                }
             }
 
             // 이미지 업로드 후 OCR 처리
