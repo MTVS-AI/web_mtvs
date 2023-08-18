@@ -1,0 +1,65 @@
+
+.chatbot-button {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+}
+/* 이미지 hover 스타일 */
+.hover-effect {
+    transition: transform 0.2s, opacity 0.2s;  /* 애니메이션 효과 */
+}
+
+.hover-effect:hover {
+    transform: scale(1.1);  /* 이미지 확대 효과 */
+    opacity: 0.8;  /* 이미지 투명도 조절 */
+}
+.chat-message {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+.user-message {
+    background-color: #fff;
+    text-align: right;
+}
+.bot-message {
+    background-color: #fff;
+}
+
+#userInput {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    background-color: #0d6efd;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
+.navbar-logo {
+    width: 50px;  /* 원하는 너비로 변경 */
+    height: 50px; /* 원하는 높이로 변경 */
+    margin-right: 10px; /* 로고와 텍스트 사이의 간격 조절 */
+    vertical-align: middle; /* 이미지와 텍스트를 수직으로 중앙 정렬 */
+}
+.chatbot-button img {
+    width: 50px; /* 원하는 너비로 설정 */
+    height: 50px; /* 원하는 높이로 설정 */
+}

@@ -17,67 +17,7 @@
         <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="static/css/styles.css" rel="stylesheet" />
-        <style>
-            .chatbot-button {
-                position: fixed;
-                right: 20px;
-                bottom: 20px;
-                z-index: 1000;
-                background-color: #007BFF;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-                cursor: pointer;
-            }
-            /* 이미지 hover 스타일 */
-            .hover-effect {
-                transition: transform 0.2s, opacity 0.2s;  /* 애니메이션 효과 */
-            }
-    
-            .hover-effect:hover {
-                transform: scale(1.1);  /* 이미지 확대 효과 */
-                opacity: 0.8;  /* 이미지 투명도 조절 */
-            }
-            .chat-message {
-                padding: 8px;
-                margin: 5px 0;
-                border-radius: 5px;
-            }
-            .user-message {
-                background-color: #fff;
-                text-align: right;
-            }
-            .bot-message {
-                background-color: #fff;
-            }
-            #userInput {
-                width: 80%;
-                padding: 10px;
-                margin: 10px 0;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-            button {
-                background-color: #0d6efd;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            button:hover {
-                background-color: #0056b3;
-            }
-            .navbar-logo {
-                width: 50px;  /* 원하는 너비로 변경 */
-                height: 50px; /* 원하는 높이로 변경 */
-                margin-right: 10px; /* 로고와 텍스트 사이의 간격 조절 */
-                vertical-align: middle; /* 이미지와 텍스트를 수직으로 중앙 정렬 */
-            }
-        </style>
+        <link href="static/css/custom-styles.css" rel="stylesheet" />
 
     </head>
     <body id="page-top">
@@ -94,7 +34,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#ocr">CLEANER</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#CHATBOT">INQUIRY</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#chatbot">INQUIRY</a></li>
                         <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li> -->
                     </ul>
                 </div>
@@ -105,17 +45,21 @@
             <div class="container d-flex align-items-center flex-column">
                 <!-- Masthead Avatar Image-->
                 <img class="masthead-avatar mb-5" src="static/assets/img/MTVS_logo_white.png" alt="..." />
+                <!-- Masthead Subheading-->
+                <p class="masthead-subheading font-weight-light mb-0">Developed by JM, MS, JM, IC</p>
                 <!-- Masthead Heading-->
                 <h1 class="masthead-heading text-uppercase mb-0">Banner Cleaner</h1>
                 <!-- upload -->
-                <div class="text-center mt-4">
+                <div class="text-center mt-4">                    
+                    <!-- 업로드 버튼 (HTML 부분) -->
                     <form id="imageUploadForm" enctype="multipart/form-data" action="/myhome/ocr" method="post">
+                        <input type="file" id="imageFile" name="images[]" multiple style="display:none;" onchange="displayFileName(this); displayFilePreview(this);">
                         <label for="imageFile" class="btn btn-xl btn-outline-light">
                             <i class="fas fa-upload me-2"></i>
-                            Choose File <span id="fileName">No file chosen</span>
+                            Choose Files <span id="fileName">No files chosen</span>
                         </label>
-                        <input type="file" name="file" id="imageFile" style="display: none;" onchange="displayFileName(this)">
-                        <button type="submit">Upload</button>
+                        <button type="submit" class="btn btn-xl btn-outline-light">Upload</button>
+                        <div id="filePreview"></div>
                     </form>
                     <!-- 로딩 표시 -->
                 <div id="loading" style="display:none;"><i class="fa fa-spinner fa-spin"></i> 처리 중...</div>
@@ -135,14 +79,13 @@
                     </div>
                 </div>
             </div>
-                <!-- Masthead Subheading-->
-                <p class="masthead-subheading font-weight-light mb-0">Developed by JM, MS, JM, IC</p>
+                
             </div>
         </header>
                 
         <!-- 오른쪽 하단의 챗봇 버튼 -->
         <button class="chatbot-button" data-bs-toggle="modal" data-bs-target="#chatbotModal">
-            <img src="D:/MTVS-AI/web_mtvs/web_mtvs/static/assets/img/portfolio/chatbot.png" alt="Chatbot" style="width: 35px;">
+            <i class="fas fa-comments"></i>
         </button>
 
         <!-- Chatbot Modal -->
@@ -165,69 +108,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
-        
-        <script>
-            $(document).ready(function() {
-                $("#userInput").on('keypress', function(e) {
-                    if(e.which == 13) {  // 13은 엔터키의 keyCode
-                        e.preventDefault();  // 기본 엔터키의 이벤트를 방지합니다 (예: 폼 제출)
-                        sendMessage();
-                    }
-                });
-            });
-            function sendMessage() {
-                var userMessage = $("#userInput").val();
-                $("#chatbox").append('<div class="chat-message user-message">User: ' + userMessage + '</div>');
-                $.post("/myhome/chatbot", { chat: userMessage }, function(response) {
-                    $("#chatbox").append('<div class="chat-message bot-message">Chatbot: ' + response + '</div>');
-                    $("#userInput").val('');  // 입력 필드 초기화
-                    $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);  // 채팅 창 아래로 스크롤
-                }).fail(function() {
-                    $("#chatbox").append('<div>Error: 서버 응답 없음</div>');
-                });
-            }
-                // 파일 이름 표시 함수
-            function displayFileName(input) {
-                if (input.files && input.files[0]) {
-                    document.getElementById('fileName').textContent = input.files[0].name;
-                }
-            }
+        <script src="static/js/custom-scripts.js"></script>
 
-            // 이미지 업로드 후 OCR 처리
-            $("#imageUploadForm").submit(function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-                
-                // 로딩 시작
-                $("#loading").show();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/myhome/ocr',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    // 로딩 종료
-                    success: function(data) {
-                        console.log(data);
-                        $("#loading").hide();
-
-                        $("#ocrOriginalImage").html('<img src="' + URL.createObjectURL($("#imageFile")[0].files[0]) + '" width="100%">');
-                        if (data.text) {
-                            $("#ocrTextResult").text(data.text);
-                        } else {
-                            $("#ocrTextResult").text("오류: 서버에서 올바른 데이터 형식이 아닙니다.");
-                        }
-                        $('#ocrResultModal').modal('show');
-
-                    },
-                    error: function() {
-                        // 로딩 종료 및 에러 메시지 표시
-                        $("#loading").hide();
-                        alert('OCR 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
-                    }
-                });
-            });
-    </script>
     </body>
 </html>
