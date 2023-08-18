@@ -63,3 +63,7 @@ button:hover {
     width: 50px; /* 원하는 너비로 설정 */
     height: 50px; /* 원하는 높이로 설정 */
 }
+#filePreview img {
+    max-width: 800px;  /* 원하는 너비로 조정 */
+    max-height: 800px; /* 원하는 높이로 조정 */
+}
