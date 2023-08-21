@@ -76,8 +76,7 @@ class ImageProcess:
 
     def move_img(self, source_path, destination_path):
         if not os.path.exists(os.path.dirname('/'.join(destination_path.split('/')[:-1])+'/')):
-            os.makedirs(os.path.dirname('/'.join(destination_path.split('/')[:-1])+'/'), exist_ok=True)
-        
+            os.makedirs(os.path.dirname('/'.join(destination_path.split('/')[:-1])+'/'), exist_ok=True)        
         # 파일 이동
         shutil.move(source_path, destination_path)
 
@@ -302,15 +301,22 @@ class ImageProcess:
 
         return df_report
 
-    def run_all(self, img_path, json_file_path):
-        df_report = self.make_frame(json_file_path)
-        df_report = self.yolo_run(img_path, df_report)
-        idx = 0 # 추정되는 인덱스, 필요에 따라 조절 가능.
-        df_report = self.clova_ocr_run(idx, df_report)
-        df_report = self.chatGPT_run(idx,df_report)
-        
-        return df_report.to_csv('reports/report_'+'_'.join(self.date_created)+'.csv')
+    def run_all(self, imgs, json_file_path):
+        for idx,img in enumerate(imgs):
+            df_report = self.make_frame(json_file_path)
+            time.sleep(1)
+            df_report = self.yolo_run(img, df_report)
+            time.sleep(1)
+            # idx = 0 # 추정되는 인덱스, 필요에 따라 조절 가능.
+            df_report = self.clova_ocr_run(idx, df_report)
+            time.sleep(1)
+            df_report = self.chatGPT_run(idx,df_report)
 
-# 사용법
-analyzer = ImageProcess('best.pt', 'OPENAI_KEY', 'CLOVA_API_URL', 'CLOVA_SECRET_KEY')
-df_report = analyzer.run_all('IMAGE_PATH', 'JSON_PATH')
+        df_report.to_csv('reports/report_'+'_'.join(self.date_created)+'.csv')        
+        print("Process completed successfully.") 
+
+# # # 사용법
+# analyzer = ImageProcess('best.pt', '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',
+#                         'https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general',
+#                         'R1prcGNuRUthUG5hdGJPUW1Xd3pDVlVLUXdJZEx6UFM=')
+# df_report = analyzer.run_all('IMAGE_PATH', 'JSON_PATH')

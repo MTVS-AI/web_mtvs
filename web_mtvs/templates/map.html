@@ -36,7 +36,7 @@
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#ocr">CLEANER</a></li>
                         <li class="nav-item mx-0 mx-lg-1">
                             <a class="nav-link py-3 px-0 px-lg-3 rounded" href="#chatbotModal" data-bs-toggle="modal" data-bs-target="#chatbotModal">INQUIRY</a>
-                        </li>
+                        </li>                        
                         <!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li> -->
                     </ul>
                 </div>
@@ -51,19 +51,9 @@
                 <h1 class="masthead-heading text-uppercase mb-0">Banner Cleaner</h1>
                 <!-- Masthead Subheading-->
                 <p class="masthead-subheading font-weight-light mb-0">Developed by JM, MS, JM, IC</p>
-                <!-- upload -->
-                <div class="text-center mt-4">       
-                    <!-- 업로드 버튼 (HTML 부분) -->
-                    <form id="csvUploadForm" enctype="multipart/form-data" method="post">
-                        <input type="file" id="csvFile" name="images[]" multiple style="display:none;" onchange="displayFileName(this);">
-                        <label for="csvFile" class="btn btn-xl btn-outline-light mt-3">
-                            <i class="fas fa-upload me-2"></i>
-                            Choose Files <span id="fileName">No files chosen</span>
-                        </label>
-                        <button type="submit" class="btn btn-xl btn-outline-light mt-3">Upload</button>
-                    </form>
-                    <!-- 로딩 표시 -->
-                    <div id="loading" style="display:none;"><i class="fa fa-spinner fa-spin"></i> 처리 중...</div>
+
+                <div class="text-center mt-4">
+                    {{ map_html | safe }}
                 </div>
                 
             </div>

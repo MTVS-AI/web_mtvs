@@ -6,6 +6,7 @@ $(document).ready(function() {
         }
     });
 });
+
 function sendMessage() {
     var userMessage = $("#userInput").val();
     $("#chatbox").append('<div class="chat-message user-message">User: ' + userMessage + '</div>');
@@ -20,61 +21,102 @@ function sendMessage() {
 // 파일 이름 표시 함수
 function displayFileName(input) {
     var previewArea = document.getElementById('filePreview');
-    previewArea.innerHTML = ''; // clear existing previews
+    if (!previewArea) {
+        console.error("Element with ID 'filePreview' not found.");
+        return;
+    }
+    // Clear existing previews
+    previewArea.innerHTML = '';
 
     if (input.files) {
         var files = Array.from(input.files);
 
         files.forEach(file => {
-            var reader = new FileReader();
+            // For text files like CSV, you might want to read some lines
+            // or simply display the file name as a preview
 
-            reader.onload = function(e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                img.width = 100; // set width (you can adjust as needed)
-                previewArea.appendChild(img);
-            }
-
-            reader.readAsDataURL(file);
+            var text = document.createElement('p');
+            text.textContent = "Selected file: " + file.name;
+            previewArea.appendChild(text);
         });
 
-        document.getElementById('fileName').textContent = files.map(file => file.name).join(', ');
+        var fileNameElement = document.getElementById('fileName');
+
+        if (fileNameElement) {
+            fileNameElement.textContent = files.map(file => file.name).join(', ');
+        }
     }
 }
 
+// CSV UPLOAD
+$(document).ready(function(){
+    $("#csvUploadForm").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData(this);
 
-// 이미지 업로드 후 OCR 처리
-$("#imageUploadForm").submit(function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-    
-    // 로딩 시작
-    $("#loading").show();
+        $("#loading").show(); // 로딩 표시
 
-    $.ajax({
-        type: 'POST',
-        url: '/myhome/ocr',
-        data: formData,
-        contentType: false,
-        processData: false,
-        // 로딩 종료
-        success: function(data) {
-            console.log(data);
-            $("#loading").hide();
-
-            $("#ocrOriginalImage").html('<img src="' + URL.createObjectURL($("#imageFile")[0].files[0]) + '" width="100%">');
-            if (data.text) {
-                $("#ocrTextResult").text(data.text);
-            } else {
-                $("#ocrTextResult").text("오류: 서버에서 올바른 데이터 형식이 아닙니다.");
-            }
-            $('#ocrResultModal').modal('show');
-
-        },
-        error: function() {
-            // 로딩 종료 및 에러 메시지 표시
-            $("#loading").hide();
-            alert('OCR 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
-        }
+        $.ajax({
+            url: '/myhome/upload',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                alert(response.message);
+                $("#loading").hide(); // 로딩 숨김
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
     });
 });
+
+
+// $("#imageUploadForm").submit(function(e) {
+//     e.preventDefault();
+//     var formData = new FormData(this);
+    
+//     // 로딩 시작
+//     $("#loading").show();
+
+//     $.ajax({
+//         type: 'POST',
+//         url: '/mymap/map',
+//         data: formData,
+//         cache: false,
+//         contentType: false,
+//         processData: false,
+//         success: function(data) {
+//             console.log(data);
+
+//             // 로딩 종료
+//             $("#loading").hide();
+
+//             if (data.hasOwnProperty('imageFile')) {
+//                 $("#ocrOriginalImage").html('<img src="' + URL.createObjectURL($("#imageFile")[0].files[0]) + '" width="100%">');
+//             }
+
+//             // categories 정보가 있다면 표시
+//             if (data.hasOwnProperty('categories')) {
+//                 $("#ocrTextResult").append("<p>Categories: " + data.categories + "</p>");
+//             }
+
+//             // text 정보가 있다면 표시
+//             if (data.hasOwnProperty('categories_basis')) {
+//                 $("#ocrTextResult").append("<p>Text: " + data.categories_basis + "</p>");
+//             }
+
+//             // 두 가지 정보 모두 없을 경우
+//             if (!data.hasOwnProperty('categories') && !data.hasOwnProperty('categories_basis')) {
+//                 $("#ocrTextResult").text("오류: 서버에서 올바른 데이터 형식이 아닙니다.");
+//             }
+
+//             $('#ocrResultModal').modal('show');
+//         },
+//         error: function() {
+//             // 로딩 종료 및 에러 메시지 표시
+//             $("#loading").hide();
+//             alert('OCR 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+//         }
+//     });
+// });

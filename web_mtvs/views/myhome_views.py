@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect, url_for, render_template
 from sentence_transformers import SentenceTransformer
 # from sklearn.metrics.pairwise import cosine_similarity
 import chromadb
@@ -9,6 +9,8 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 import logging
+from flask import session
+# from .imgPro import ImageProcess
 
 logging.basicConfig(level=logging.DEBUG)
 bp = Blueprint('myhome', __name__, url_prefix='/myhome') 
@@ -33,15 +35,15 @@ for temp in range(len(df1)):
 
 collections.add(embeddings=embeddings,metadatas=metadata,ids=ids)
 
-# TODO OCR
+# TODO IMG_PROCESSR
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads/')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'reports/report')
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'csv'}
 
-ocr_engine = PaddleOCR()
+# ocr_engine = PaddleOCR()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -54,40 +56,58 @@ def chatbot():
     return query_result['metadatas'][0][0]['A']
 
 
-@bp.route('/ocr', methods=['GET', 'POST'])
-def ocr():
-    if 'file' not in request.files:
-        return "No file part", 400
+@bp.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        # 'images[]'는 input 태그의 name 속성입니다.
+        uploaded_files = request.files.getlist('images[]')
+        
+        for file in uploaded_files:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(filepath)
+                
+                if filename.rsplit('.', 1)[1].lower() == 'csv':
+                    df = pd.read_csv(filepath)
+                    session['csv_filepath'] = filepath  # 세션에 파일 경로 저장
+                    return jsonify({"message": "Upload successful"})
+                else:
+                    # 이미지 파일 처리 로직
+                    # 여기에 추가적인 이미지 파일 처리 로직을 넣을 수 있습니다.
+                    pass
 
-    file = request.files['file']
+        # 처리가 끝나면 map 라우트로 리다이렉트
+        return redirect(url_for('mymap/map'))
 
-    if file.filename == '':
-        return "No selected file", 400
+    return render_template('map.html')  # GET 요청시 home.html을 렌더링
 
-    if not allowed_file(file.filename):
-        return "Invalid image format", 400
 
-    # 고유한 파일명 생성
-    ext = os.path.splitext(file.filename)[1]
-    unique_filename = str(uuid.uuid4()) + ext
-    filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+# #TODO YOLO & OCR & GPT
+# @bp.route('/ocr', methods=['GET', 'POST'])
+# def ocr():
+#     if 'file' not in request.files:
+#         return "No file part", 400
 
-    file.save(filepath)
+#     file = request.files['file']
 
-    try:
-        result = ocr_engine.ocr(filepath)
-        logging.debug("OCR result: %s", result)
+#     if file.filename == '':
+#         return "No selected file", 400
 
-        # 텍스트만 추출하기 위한 코드
-        for line in result:
-            logging.debug("Type of line[1][0]: %s, Value: %s", type(line[1][0]), line[1][0])
+#     if not allowed_file(file.filename):
+#         return "Invalid image format", 400
 
-        texts = [line[1][0] for line in result if len(line) > 1 and len(line[1]) > 0]
-        extracted_text = ' '.join(texts)
+#     # 고유한 파일명 생성
+#     ext = os.path.splitext(file.filename)[1]
+#     unique_filename = str(uuid.uuid4()) + ext
+#     filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
 
-    except Exception as e:
-        logging.error("OCR 처리 중 오류 발생: ", exc_info=True)
-        return f"OCR error: {str(e)}", 500
-
-    # os.remove(filepath)  # OCR 처리된 이미지 파일 삭제 (필요하다면 주석 해제)
-    return jsonify({"text": extracted_text})
+#     file.save(filepath)
+    
+#     # run_all 함수 호출
+#     analyzer = ImageProcess('best.pt', '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',
+#                         'https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general',
+#                         'R1prcGNuRUthUG5hdGJPUW1Xd3pDVlVLUXdJZEx6UFM=')
+#     df_report = analyzer.run_all([filepath], 'capture_data/meta_data.json') # JSON_PATH는 적절한 경로로 대체하세요.
+#     # os.remove(filepath)  # OCR 처리된 이미지 파일 삭제 (필요하다면 주석 해제)
+#     return jsonify({'categories': df_report.categories})
