@@ -314,9 +314,3 @@ class ImageProcess:
 
         df_report.to_csv('reports/report_'+'_'.join(self.date_created)+'.csv')        
         print("Process completed successfully.") 
-
-# # # 사용법
-# analyzer = ImageProcess('best.pt', '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',
-#                         'https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general',
-#                         'R1prcGNuRUthUG5hdGJPUW1Xd3pDVlVLUXdJZEx6UFM=')
-# df_report = analyzer.run_all('IMAGE_PATH', 'JSON_PATH')
