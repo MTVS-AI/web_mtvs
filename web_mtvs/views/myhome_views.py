@@ -73,7 +73,7 @@ def upload():
                 fil.save(os.path.join('./web_mtvs/views/capture_data', filename))
 
         # 추가 ////
-        aaa = IP('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','https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general','cUZSQ3B0ZHpLZk53Q1JpeFpqQXFjd1VleGtZSW5keEY=')
+        aaa = IP('','https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general','cUZSQ3B0ZHpLZk53Q1JpeFpqQXFjd1VleGtZSW5keEY=')
         df_report = aaa.run_all(aaa.imgs, aaa.json_file_path)
 
         bbb = MM(df_report)
