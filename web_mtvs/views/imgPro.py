@@ -34,7 +34,7 @@ class ImageProcess:
 
         self.date_created = ''
         self.imgs = glob('./web_mtvs/views/capture_data/*.jpg')
-        self.json_file_path = '/web_mtvs/views/meta_data.json'
+        self.json_file_path = './web_mtvs/views/meta_data.json'
         # openai.api_key = self.openai_key
 
     def make_frame(self):
@@ -63,12 +63,12 @@ class ImageProcess:
                 'Legality' : []
             }
             df_data.append(df_row)
-            
+
         df_report = pd.DataFrame(df_data)
         self.date_created = meta_data['dataset_info']['date_created'].split("T")[0].split("-")
         time.sleep(0.1)
         # print(date_created)
-        df_report.to_csv('./check_flask/views/reports/report_' + '_'.join(self.date_created) + '.csv')
+        df_report.to_csv('./web_mtvs/views/reports/report_' + '_'.join(self.date_created) + '.csv')
         return df_report
     
     def move_all_img(self, source_folder, destination_folder):
