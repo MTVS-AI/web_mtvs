@@ -38,10 +38,9 @@ class ImageProcess:
         # openai.api_key = self.openai_key
 
     def make_frame(self):
-        with open(self.json_file_path, 'r') as json_file:
+        with open(self.json_file_path, 'r', encoding='UTF-8') as json_file:
             meta_data = json.load(json_file)
 
-        # DataFrame 정의
         df_data = []
         for item in tqdm(meta_data['data']):
             date_time = item['timestamp'].split("T")
@@ -50,7 +49,7 @@ class ImageProcess:
                 'Date' : date_time[0],
                 'Time' : date_time[1],
                 'Location' : [item['location']['latitude'], item['location']['longitude']],
-                'Origin_img' : [np.array(Image.open('capture_data/' + item['file_name'])).tolist()],
+                'Origin_img' : [np.array(Image.open('./check_flask/views/capture_data/' + item['file_name'])).tolist()],
                 'Detect_img' : [],
                 'Crop_classes' : [],
                 'Crop_imgs' : [],

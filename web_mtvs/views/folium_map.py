@@ -5,6 +5,17 @@ import numpy as np
 from PIL import Image
 import os
 
+import pandas as pd
+import base64
+import folium
+import folium.plugins
+
+import numpy as np
+from PIL import Image
+from tqdm import tqdm
+import os
+import branca
+
 class MapManager:
     # 임시 좌표를 판교역 근처 좌표로 수정
     def __init__(self,df_report):
@@ -102,14 +113,25 @@ class MapManager:
                 # 이미지 옆에 표 형태로 세부내용 넣기
                 html = f"""
                 <tr>
-                    <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td><td align=center>frame</td>
-                    <td>
-                    <table border width=650 height=95%>
-                        <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
-                        <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
-                        <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
-                    </table>
-                    </td>
+                    <tr>
+                        <td>
+                        <table id="image">
+                            <tr>
+                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td>
+                            </tr>
+                            <tr>
+                                <td align=center border=1>frame</td>
+                            </tr>
+                        </table>
+                        </td>
+                        <td>    
+                        <table border=1 width=650 height=95%>
+                            <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
+                            <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
+                            <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
+                        </table>
+                        </td>                    
+                    </tr>
                 </tr>
                 """
                 htmls.append(html)
@@ -122,15 +144,25 @@ class MapManager:
                 # 이미지 옆에 표 형태로 세부내용 넣기
                 html = f"""
                 <tr>
-                    <td>
-                    <img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td><td align=center>crop_img_{i}</td>
-                    <td>
-                    <table border width=650 height=95%>
-                        <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
-                        <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
-                        <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
-                    </table>
-                    </td>
+                    <tr>
+                        <td>
+                        <table id="image">
+                            <tr>
+                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td>
+                            </tr>
+                            <tr>
+                                <td align=center border=1>crop_img_{i}</td>
+                            </tr>
+                        </table>
+                        </td>
+                        <td>    
+                        <table border=1 width=650 height=95%>
+                            <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
+                            <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
+                            <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
+                        </table>
+                        </td>                    
+                    </tr>
                 </tr>
                 """
                 htmls.append(html)
@@ -143,8 +175,8 @@ class MapManager:
         pic_base = self.get_base_pics(base_path_list)
         pic_crops = self.get_crop_pics(crop_path_list)
 
-        base_h = len(pic_base) * 100
-        crop_h = len((df_report.loc[idx]['Crop_classes'])) * 100  # 만약 banner나 frame을 detect하지 못했다면 popup창의 크기를 조절
+        base_h = len(pic_base) * 135
+        crop_h = len((df_report.loc[idx]['Crop_classes'])) * 135  # 만약 banner나 frame을 detect하지 못했다면 popup창의 크기를 조절
 
         crop_html = f''
         try:
@@ -157,53 +189,57 @@ class MapManager:
 
         # 원본 이미지와 detect 이미지는 고정적으로 들어감
         image_tag = f"""
-            <head>
-            <meta charset="euc-kr">
-            <link rel="stylesheet" href="">
-            <style>
-                <link rel="stylesheet" href="static/css/style.css">
-            </style>
-            </head>
-            <body>
-                <div>
-                <table class="table-dark" border=1>
-                    <tr align=center>
-                        <th width="200">촬영 일시</th>
-                        <td width="650">{df_report.loc[idx]['Date']} {df_report.loc[idx]['Time']}</td>
-                    </tr>
-                    <tr align=center>
-                        <th width="200">이미지</th>
-                        <th width="650">내용</th>
-                    </tr>
-                    <tr>
-                        <td>
-                        <table id="image">
-                            <tr>
-                                <td><img src="data:image/jpeg;base64,{pic_base[0]}" width=200 height=100></td>
-                            </tr>
-                            <tr>
-                                <td align=center>Origin Image</td>
-                            </tr>
-                        </table>
-                        </td><td align=center>원본 이미지</td>
-                    </tr>
-                    <tr>
-                        <td>
-                        <table id="image">
-                            <tr>
-                                <td><img src="data:image/jpeg;base64,{pic_base[1]}" width=200 height=100></td>
-                            </tr>
-                            <tr>
-                                <td align=center>Detect Image</td>
-                            </tr>
-                        </table>
-                        </td><td align=center>Yolo로 Detect한 이미지</td>
-                    </tr>
-            """ + crop_html + """
-            </body>
-            """
+        <head>
+        <meta charset="euc-kr">
+        <link rel="stylesheet" href="">
+        <style>
+            <link rel="stylesheet" href="static/css/style.css">
+        </style>
+        </head>
+        <body>
+            <div>
+            <table class="table-dark" border=1>
+                <tr align=center>
+                    <th width="200">촬영 일시</th>
+                    <td width="650">{df_report.loc[idx]['Date']} {df_report.loc[idx]['Time']}</td>
+                </tr>
+                <tr align=center>
+                    <th width="200">이미지</th>
+                    <th width="650">내용</th>
+                </tr>
+                <tr>
+                    <td>
+                    <table id="image">
+                        <tr>
+                            <td><img src="data:image/jpeg;base64,{pic_base[0]}" width=200 height=100></td>
+                        </tr>
+                        <tr>
+                            <td align=center>Origin Image</td>
+                        </tr>
+                    </table>
+                    </td><td align=center>원본 이미지</td>
+                </tr>
+                <tr>
+                    <td>
+                    <table id="image">
+                        <tr>
+                            <td><img src="data:image/jpeg;base64,{pic_base[1]}" width=200 height=100></td>
+                        </tr>
+                        <tr>
+                            <td align=center>Detect Image</td>
+                        </tr>
+                    </table>
+                    </td><td align=center>Yolo로 Detect한 이미지</td>
+                </tr>
+        """ + crop_html + """
+        </body>
+        """
 
-        iframe = folium.IFrame(image_tag, width=1000, height=150+base_h+crop_h)
+        height = 59 + base_h + crop_h
+        if height > 500:
+            height = 500
+
+        iframe = branca.element.IFrame(image_tag, width=902, height=height)
         popup = folium.Popup(iframe)
 
         return popup
@@ -243,4 +279,5 @@ class MapManager:
             else:
                 legal_group.add_child(folium.Marker(location = (df_report.iloc[i]['Location']), icon = folium.Icon(color = 'green', icon = 'check'), popup = popup))
                 print("Mark1")
-        map.save('./web_mtvs/templates/map.html')
+
+        map.save('./web_mtvs/templates/Map.html')

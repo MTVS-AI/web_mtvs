@@ -46,9 +46,6 @@ collections.add(embeddings=embeddings,metadatas=metadata,ids=ids)
 
 # ocr_engine = PaddleOCR()
 
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = set(['jpg','JPG','png','PNG','mp4','json'])
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS, filename
 
 @bp.route('/chatbot', methods=['GET', 'POST'])
 def chatbot():
@@ -57,6 +54,11 @@ def chatbot():
 
     return query_result['metadatas'][0][0]['A']
 
+
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = set(['jpg','JPG','png','PNG','mp4','json'])
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS, filename
 
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload():

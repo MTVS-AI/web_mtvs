@@ -57,12 +57,16 @@ $(document).ready(function(){
         $("#loading").show(); // 로딩 표시
 
         $.ajax({
-            url: '/myhome/upload',
+            url: 'myhome/upload',
             type: 'POST',
             data: formData,
             success: function (response) {
                 alert(response.message);
                 $("#loading").hide(); // 로딩 숨김
+
+                if(response.status === 'success') {
+                    window.location.href = '/map.html'; // 혹은 Flask에서 지정한 라우트로 이동
+                }
             },
             cache: false,
             contentType: false,
@@ -70,53 +74,3 @@ $(document).ready(function(){
         });
     });
 });
-
-
-// $("#imageUploadForm").submit(function(e) {
-//     e.preventDefault();
-//     var formData = new FormData(this);
-    
-//     // 로딩 시작
-//     $("#loading").show();
-
-//     $.ajax({
-//         type: 'POST',
-//         url: '/mymap/map',
-//         data: formData,
-//         cache: false,
-//         contentType: false,
-//         processData: false,
-//         success: function(data) {
-//             console.log(data);
-
-//             // 로딩 종료
-//             $("#loading").hide();
-
-//             if (data.hasOwnProperty('imageFile')) {
-//                 $("#ocrOriginalImage").html('<img src="' + URL.createObjectURL($("#imageFile")[0].files[0]) + '" width="100%">');
-//             }
-
-//             // categories 정보가 있다면 표시
-//             if (data.hasOwnProperty('categories')) {
-//                 $("#ocrTextResult").append("<p>Categories: " + data.categories + "</p>");
-//             }
-
-//             // text 정보가 있다면 표시
-//             if (data.hasOwnProperty('categories_basis')) {
-//                 $("#ocrTextResult").append("<p>Text: " + data.categories_basis + "</p>");
-//             }
-
-//             // 두 가지 정보 모두 없을 경우
-//             if (!data.hasOwnProperty('categories') && !data.hasOwnProperty('categories_basis')) {
-//                 $("#ocrTextResult").text("오류: 서버에서 올바른 데이터 형식이 아닙니다.");
-//             }
-
-//             $('#ocrResultModal').modal('show');
-//         },
-//         error: function() {
-//             // 로딩 종료 및 에러 메시지 표시
-//             $("#loading").hide();
-//             alert('OCR 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
-//         }
-//     });
-// });
