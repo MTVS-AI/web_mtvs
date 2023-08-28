@@ -31,8 +31,10 @@ class ImageProcess:
         self.predict_crop_frame_path = self.predict_path + self.class_names[1]
         self.log_path = 'logs/'
         self.ocr = PaddleOCR(lang = 'korean')
-        self.imgs = glob('capture_data/*.jpg')
-        self.json_file_path = 'capture_data/meta_data.json'
+
+        self.date_created = ''
+        self.imgs = glob('./web_mtvs/views/capture_data/*.jpg')
+        self.json_file_path = '/web_mtvs/views/meta_data.json'
         # openai.api_key = self.openai_key
 
     def make_frame(self):
@@ -61,10 +63,12 @@ class ImageProcess:
                 'Legality' : []
             }
             df_data.append(df_row)
-
+            
         df_report = pd.DataFrame(df_data)
-        date_created = meta_data['dataset_info']['date_created'].split("T")[0].split("-")
-        df_report.to_csv('reports/report_' + '_'.join(date_created) + '.csv')
+        self.date_created = meta_data['dataset_info']['date_created'].split("T")[0].split("-")
+        time.sleep(0.1)
+        # print(date_created)
+        df_report.to_csv('./check_flask/views/reports/report_' + '_'.join(self.date_created) + '.csv')
         return df_report
     
     def move_all_img(self, source_folder, destination_folder):
@@ -195,8 +199,10 @@ class ImageProcess:
             df_report['Category'].iloc[id] = [0 if class_name=='frame' else -1 for class_name in crop_classes]
             df_report['Category_basis'].iloc[id] = [0 if class_name=='frame' else -1 for class_name in crop_classes]
             df_report = self.check_category(df_report,id,image,crop_classes,crop_xyxy)
+            df_report.to_csv('check_report')
         return df_report
-
+    
+# ----------------여기까지 진행함 ----------------------
     # TODO: Recognition Texts with CLOVA OCR
     def clova_ocr(self, img_path):
         request_json = {
@@ -215,12 +221,12 @@ class ImageProcess:
         files = [
         ('file', open(img_path,'rb'))
         ]
-
+        # secret_key -> clova_secret_key 변경 ////////
         headers = {
-        'X-OCR-SECRET': self.secret_key
+        'X-OCR-SECRET': self.clova_secret_key
         }
-
-        response = requests.request("POST", self.api_url, headers=headers, data = payload, files = files)
+        # api_url -> clova_api_url로 변경 ////////
+        response = requests.request("POST", self.clova_api_url, headers=headers, data = payload, files = files)
         return response
 
     def get_clova_contents(self, img_path):        
@@ -252,7 +258,7 @@ class ImageProcess:
     def classify_text(self, text):
         text = ' '.join(text)
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo-0613",
             messages=[
                 {"role": "system", "content": "You are responsible for classifying the text of advertising banners near the road or on the street."},
                 {"role": "system", "content": "There are a total of three classes of advertising banners to classify."},
@@ -302,21 +308,20 @@ class ImageProcess:
         return df_report
 
     def run_all(self, imgs, json_file_path):
+        df_report = self.make_frame()
         for idx,img in enumerate(imgs):
-            df_report = self.make_frame(json_file_path)
+            # make_frame괄호속 파라미터 삭제
             time.sleep(1)
             df_report = self.yolo_run(img, df_report)
             time.sleep(1)
-            # idx = 0 # 추정되는 인덱스, 필요에 따라 조절 가능.
+            # idx = 15 # 추정되는 인덱스, 필요에 따라 조절 가능.
             df_report = self.clova_ocr_run(idx, df_report)
             time.sleep(1)
             df_report = self.chatGPT_run(idx,df_report)
 
-        df_report.to_csv('reports/report_'+'_'.join(self.date_created)+'.csv')        
+        # df_report.to_csv('./check_flask/views/reports/report_' + '_'.join(self.date_created) + '.csv')
+        
         print("Process completed successfully.") 
-
-# # # 사용법
-# analyzer = ImageProcess('best.pt', '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',
-#                         'https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general',
-#                         'R1prcGNuRUthUG5hdGJPUW1Xd3pDVlVLUXdJZEx6UFM=')
-# df_report = analyzer.run_all('IMAGE_PATH', 'JSON_PATH')
+        
+        # return 추가
+        return df_report

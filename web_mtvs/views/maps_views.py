@@ -42,7 +42,7 @@ def chatbot():
 @bp.route('/map', methods=['GET', 'POST'])
 def map():
     # MapManager 객체 생성
-    csv_filepath = session.get('csv_filepath', 'reports/report/test_report_2023_08_12.csv')  # 세션에서 파일 경로 가져오기
+    csv_filepath = session.get('csv_filepath', 'reports/report/report_2023_08_12.csv')  # 세션에서 파일 경로 가져오기
     # map_manager = MapManager('reports/test_report_2023_08_12.csv')  # 적절한 파일 경로
 
     if csv_filepath:

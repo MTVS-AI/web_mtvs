@@ -3,6 +3,7 @@ from sentence_transformers import SentenceTransformer
 # from sklearn.metrics.pairwise import cosine_similarity
 import chromadb
 import pandas as pd
+import time
 
 from paddleocr import PaddleOCR
 from werkzeug.utils import secure_filename
@@ -36,17 +37,18 @@ for temp in range(len(df1)):
 collections.add(embeddings=embeddings,metadatas=metadata,ids=ids)
 
 # TODO IMG_PROCESSR
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'reports/report')
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# UPLOAD_FOLDER = os.path.join(BASE_DIR, 'reports/report')
+# if not os.path.exists(UPLOAD_FOLDER):
+#     os.makedirs(UPLOAD_FOLDER)
 
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'csv'}
+# ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'csv'}
 
 # ocr_engine = PaddleOCR()
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    ALLOWED_EXTENSIONS = set(['jpg','JPG','png','PNG','mp4','json'])
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS, filename
 
 @bp.route('/chatbot', methods=['GET', 'POST'])
 def chatbot():
@@ -59,28 +61,19 @@ def chatbot():
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
-        # 'images[]'는 input 태그의 name 속성입니다.
-        uploaded_files = request.files.getlist('images[]')
-        
-        for file in uploaded_files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
-                file.save(filepath)
-                
-                if filename.rsplit('.', 1)[1].lower() == 'csv':
-                    df = pd.read_csv(filepath)
-                    session['csv_filepath'] = filepath  # 세션에 파일 경로 저장
-                    return jsonify({"message": "Upload successful"})
-                else:
-                    # 이미지 파일 처리 로직
-                    # 여기에 추가적인 이미지 파일 처리 로직을 넣을 수 있습니다.
-                    pass
+        files = request.files.getlist('file[]')
+        print(files)
+        for fil in files:
+            filename = secure_filename(fil.filename)
+            print(fil)
+            print(filename)
+            time.sleep(0.01)
+            result,filename  = allowed_file(filename)
+            if result:
+                fil.save(os.path.join('./web_mtvs/views/capture_data', filename))
 
-        # 처리가 끝나면 map 라우트로 리다이렉트
-        return redirect(url_for('mymap/map'))
 
-    return render_template('map.html')  # GET 요청시 home.html을 렌더링
+        return render_template('map.html')  # GET 요청시 home.html을 렌더링
 
 
 # #TODO YOLO & OCR & GPT
