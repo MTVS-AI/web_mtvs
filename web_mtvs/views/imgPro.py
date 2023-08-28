@@ -29,13 +29,13 @@ class ImageProcess:
         self.predict_detect_path = self.predict_path
         self.predict_crop_banner_path = self.predict_path + self.class_names[0]
         self.predict_crop_frame_path = self.predict_path + self.class_names[1]
-        self.log_path = 'logs/'
+        self.log_path = './logs/'
         self.ocr = PaddleOCR(lang = 'korean')
 
         self.date_created = ''
         self.imgs = glob('./web_mtvs/views/capture_data/*.jpg')
-        self.json_file_path = './web_mtvs/views/meta_data.json'
-        # openai.api_key = self.openai_key
+        self.json_file_path = './web_mtvs/views/capture_data/meta_data.json'
+        openai.api_key = self.openai_key
 
     def make_frame(self):
         with open(self.json_file_path, 'r', encoding='UTF-8') as json_file:
@@ -49,7 +49,7 @@ class ImageProcess:
                 'Date' : date_time[0],
                 'Time' : date_time[1],
                 'Location' : [item['location']['latitude'], item['location']['longitude']],
-                'Origin_img' : [np.array(Image.open('./check_flask/views/capture_data/' + item['file_name'])).tolist()],
+                'Origin_img' : [np.array(Image.open('./web_mtvs/views/capture_data/' + item['file_name'])).tolist()],
                 'Detect_img' : [],
                 'Crop_classes' : [],
                 'Crop_imgs' : [],
@@ -198,7 +198,7 @@ class ImageProcess:
             df_report['Category'].iloc[id] = [0 if class_name=='frame' else -1 for class_name in crop_classes]
             df_report['Category_basis'].iloc[id] = [0 if class_name=='frame' else -1 for class_name in crop_classes]
             df_report = self.check_category(df_report,id,image,crop_classes,crop_xyxy)
-            df_report.to_csv('check_report')
+            # df_report.to_csv('check_report')
         return df_report
     
 # ----------------여기까지 진행함 ----------------------
@@ -318,7 +318,6 @@ class ImageProcess:
             time.sleep(1)
             df_report = self.chatGPT_run(idx,df_report)
 
-        # df_report.to_csv('./check_flask/views/reports/report_' + '_'.join(self.date_created) + '.csv')
         
         print("Process completed successfully.") 
         

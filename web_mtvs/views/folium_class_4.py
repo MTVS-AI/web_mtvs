@@ -1,9 +1,3 @@
-import base64
-import pandas as pd
-import folium
-import numpy as np
-from PIL import Image
-import os
 
 import pandas as pd
 import base64
@@ -117,18 +111,18 @@ class MapManager:
                         <td>
                         <table id="image">
                             <tr>
-                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td>
+                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=150 height=75></td>
                             </tr>
                             <tr>
-                                <td align=center border=1>frame</td>
+                                <td align=center border=1><font size=1>frame</font></td>
                             </tr>
                         </table>
                         </td>
                         <td>    
-                        <table border=1 width=650 height=95%>
-                            <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
-                            <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
-                            <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
+                        <table border=1 width=425 height=95%>
+                            <tr><td align=center width=40><font size=1>범례</font></td><td><font size=1>{categories[category]}</font></td></tr>
+                            <tr><td align=center width=40<font size=1>내용</font></td><td class=visible><font size=1>{texts}</font></td></tr>
+                            <tr><td align=center width=40><font size=1>근거</font></td><td class=visible><font size=1>{basis}</font></td></tr>
                         </table>
                         </td>                    
                     </tr>
@@ -148,18 +142,18 @@ class MapManager:
                         <td>
                         <table id="image">
                             <tr>
-                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=200 height=100></td>
+                                <td><img src="data:image/jpeg;base64,{pic_crops[i]}" width=150 height=75></td>
                             </tr>
                             <tr>
-                                <td align=center border=1>crop_img_{i}</td>
+                                <td align=center border=1><font size=1>crop_img_{i}</font></td>
                             </tr>
                         </table>
                         </td>
                         <td>    
-                        <table border=1 width=650 height=95%>
-                            <tr><td align=center width=40>범례</td><td>{categories[category]}</td></tr>
-                            <tr><td align=center width=40>내용</td><td class=visible>{texts}</td></tr>
-                            <tr><td align=center width=40>근거</td><td class=visible>{basis}</td></tr>
+                        <table border=1 width=425 height=95%>
+                            <tr><td align=center width=40><font size=1>범례</font></td><td><font size=1>{categories[category]}</font></td></tr>
+                            <tr><td align=center width=40><font size=1>내용</font></td><td class=visible><font size=1>{texts}</font></td></tr>
+                            <tr><td align=center width=40><font size=1>근거</font></td><td class=visible><font size=1>{basis}</font></td></tr>
                         </table>
                         </td>                    
                     </tr>
@@ -175,8 +169,8 @@ class MapManager:
         pic_base = self.get_base_pics(base_path_list)
         pic_crops = self.get_crop_pics(crop_path_list)
 
-        base_h = len(pic_base) * 135
-        crop_h = len((df_report.loc[idx]['Crop_classes'])) * 135  # 만약 banner나 frame을 detect하지 못했다면 popup창의 크기를 조절
+        base_h = len(pic_base) * 110
+        crop_h = len((df_report.loc[idx]['Crop_classes'])) * 110  # 만약 banner나 frame을 detect하지 못했다면 popup창의 크기를 조절
 
         crop_html = f''
         try:
@@ -200,46 +194,46 @@ class MapManager:
             <div>
             <table class="table-dark" border=1>
                 <tr align=center>
-                    <th width="200">촬영 일시</th>
-                    <td width="650">{df_report.loc[idx]['Date']} {df_report.loc[idx]['Time']}</td>
+                    <th width="150">촬영 일시</th>
+                    <td width="425">ID 번호: {df_report.loc[idx]['ID']} / {df_report.loc[idx]['Date']} {df_report.loc[idx]['Time']}</td>
                 </tr>
                 <tr align=center>
-                    <th width="200">이미지</th>
-                    <th width="650">내용</th>
+                    <th width="150">이미지</th>
+                    <th width="425">내용</th>
                 </tr>
                 <tr>
                     <td>
                     <table id="image">
                         <tr>
-                            <td><img src="data:image/jpeg;base64,{pic_base[0]}" width=200 height=100></td>
+                            <td><img src="data:image/jpeg;base64,{pic_base[0]}" width=150 height=75></td>
                         </tr>
                         <tr>
-                            <td align=center>Origin Image</td>
+                            <td align=center><font size=1>Origin Image</font></td>
                         </tr>
                     </table>
-                    </td><td align=center>원본 이미지</td>
+                    </td><td align=center><font size=1>원본 이미지</font></td>
                 </tr>
                 <tr>
                     <td>
                     <table id="image">
                         <tr>
-                            <td><img src="data:image/jpeg;base64,{pic_base[1]}" width=200 height=100></td>
+                            <td><img src="data:image/jpeg;base64,{pic_base[1]}" width=150 height=75></td>
                         </tr>
                         <tr>
-                            <td align=center>Detect Image</td>
+                            <td align=center><font size=1>Detect Image</font></td>
                         </tr>
                     </table>
-                    </td><td align=center>Yolo로 Detect한 이미지</td>
+                    </td><td align=center><font size=1>Yolo로 Detect한 이미지</font></td>
                 </tr>
         """ + crop_html + """
         </body>
         """
 
         height = 59 + base_h + crop_h
-        if height > 500:
-            height = 500
+        if height > 450:
+            height = 450
 
-        iframe = branca.element.IFrame(image_tag, width=902, height=height)
+        iframe = branca.element.IFrame(image_tag, width=627, height=height)
         popup = folium.Popup(iframe)
 
         return popup

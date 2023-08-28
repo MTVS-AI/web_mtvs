@@ -1,54 +1,77 @@
-/*!
-* Start Bootstrap - Freelancer v7.0.7 (https://startbootstrap.com/theme/freelancer)
-* Copyright 2013-2023 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-freelancer/blob/master/LICENSE)
-*/
-//
-// Scripts
-// 
-
-window.addEventListener('DOMContentLoaded', event => {
-
-    // Navbar shrink function
-    var navbarShrink = function () {
-        const navbarCollapsible = document.body.querySelector('#mainNav');
-        if (!navbarCollapsible) {
-            return;
+$(document).ready(function() {
+    $("#userInput").on('keypress', function(e) {
+        if(e.which == 13) {  // 13은 엔터키의 keyCode
+            e.preventDefault();  // 기본 엔터키의 이벤트를 방지합니다 (예: 폼 제출)
+            sendMessage();
         }
-        if (window.scrollY === 0) {
-            navbarCollapsible.classList.remove('navbar-shrink')
-        } else {
-            navbarCollapsible.classList.add('navbar-shrink')
-        }
+    });
+});
 
-    };
+function sendMessage() {
+    var userMessage = $("#userInput").val();
+    $("#chatbox").append('<div class="chat-message user-message">User: ' + userMessage + '</div>');
+    $.post("/myhome/chatbot", { chat: userMessage }, function(response) {
+        $("#chatbox").append('<div class="chat-message bot-message">Chatbot: ' + response + '</div>');
+        $("#userInput").val('');  // 입력 필드 초기화
+        $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);  // 채팅 창 아래로 스크롤
+    }).fail(function() {
+        $("#chatbox").append('<div>Error: 서버 응답 없음</div>');
+    });
+}
+// 파일 이름 표시 함수
+function displayFileName(input) {
+    var previewArea = document.getElementById('filePreview');
+    if (!previewArea) {
+        console.error("Element with ID 'filePreview' not found.");
+        return;
+    }
+    // Clear existing previews
+    previewArea.innerHTML = '';
 
-    // Shrink the navbar 
-    navbarShrink();
+    if (input.files) {
+        var files = Array.from(input.files);
 
-    // Shrink the navbar when page is scrolled
-    document.addEventListener('scroll', navbarShrink);
+        files.forEach(file => {
+            // For text files like CSV, you might want to read some lines
+            // or simply display the file name as a preview
 
-    // Activate Bootstrap scrollspy on the main nav element
-    const mainNav = document.body.querySelector('#mainNav');
-    if (mainNav) {
-        new bootstrap.ScrollSpy(document.body, {
-            target: '#mainNav',
-            rootMargin: '0px 0px -40%',
+            var text = document.createElement('p');
+            text.textContent = "Selected file: " + file.name;
+            previewArea.appendChild(text);
         });
-    };
 
-    // Collapse responsive navbar when toggler is visible
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
-    const responsiveNavItems = [].slice.call(
-        document.querySelectorAll('#navbarResponsive .nav-link')
-    );
-    responsiveNavItems.map(function (responsiveNavItem) {
-        responsiveNavItem.addEventListener('click', () => {
-            if (window.getComputedStyle(navbarToggler).display !== 'none') {
-                navbarToggler.click();
-            }
+        var fileNameElement = document.getElementById('fileName');
+
+        if (fileNameElement) {
+            fileNameElement.textContent = files.map(file => file.name).join(', ');
+        }
+    }
+}
+
+// CSV UPLOAD
+$(document).ready(function(){
+    $("#csvUploadForm").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData(this);
+
+        $("#loading").show(); // 로딩 표시
+
+        $.ajax({
+            url: 'myhome/upload',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                alert(response.message);
+                $("#loading").hide(); // 로딩 숨김
+
+                // if(response.status === 'success') {
+                //     window.location.href = 'Map.html'; // 혹은 Flask에서 지정한 라우트로 이동
+                //     // console.log("success");
+                // }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
         });
     });
-
 });
