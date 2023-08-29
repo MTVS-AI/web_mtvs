@@ -39,7 +39,17 @@ for temp in range(len(df1)):
 
 collections.add(embeddings=embeddings,metadatas=metadata,ids=ids)
 
-#TODO IMAGE PROCESS
+# TODO IMG_PROCESSR
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# UPLOAD_FOLDER = os.path.join(BASE_DIR, 'reports/report')
+# if not os.path.exists(UPLOAD_FOLDER):
+#     os.makedirs(UPLOAD_FOLDER)
+
+# ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'csv'}
+
+# ocr_engine = PaddleOCR()
+
+# 함수 추가 ////
 def file_validation(filename):
     ALLOWED_EXTENSIONS = set(['jpg','JPG','png','PNG','mp4','json'])
     file_extension = filename.rsplit('.', 1)[1]
@@ -73,7 +83,7 @@ def upload():
                 fil.save(os.path.join('./web_mtvs/views/capture_data', filename))
 
         # 추가 ////
-        aaa = IP('','https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general','cUZSQ3B0ZHpLZk53Q1JpeFpqQXFjd1VleGtZSW5keEY=')
+        aaa = IP('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','https://fsjr0lq9ke.apigw.ntruss.com/custom/v1/24396/82f04b3aebc287bf6b01f1571df49417fd2b38cb145fa7f9aadbb152eacbb606/general','cUZSQ3B0ZHpLZk53Q1JpeFpqQXFjd1VleGtZSW5keEY=')
         df_report = aaa.run_all(aaa.imgs, aaa.json_file_path)
 
         bbb = MM(df_report)
@@ -81,3 +91,28 @@ def upload():
         print("ran")
 
         return render_template('Map.html')  # GET 요청시 home.html을 렌더링
+
+
+# #TODO YOLO & OCR & GPT
+# @bp.route('/ocr', methods=['GET', 'POST'])
+# def ocr():
+#     if 'file' not in request.files:
+#         return "No file part", 400
+
+#     file = request.files['file']
+
+#     if file.filename == '':
+#         return "No selected file", 400
+
+#     if not allowed_file(file.filename):
+#         return "Invalid image format", 400
+
+#     # 고유한 파일명 생성
+#     ext = os.path.splitext(file.filename)[1]
+#     unique_filename = str(uuid.uuid4()) + ext
+#     filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+
+#     file.save(filepath)
+    
+#     # run_all 함수 호출
+#     

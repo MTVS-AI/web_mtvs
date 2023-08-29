@@ -64,9 +64,10 @@ $(document).ready(function(){
                 alert(response.message);
                 $("#loading").hide(); // 로딩 숨김
 
-                if(response.status === 'success') {
-                    window.location.href = '/map.html'; // 혹은 Flask에서 지정한 라우트로 이동
-                }
+                // if(response.status === 'success') {
+                //     window.location.href = 'Map.html'; // 혹은 Flask에서 지정한 라우트로 이동
+                //     // console.log("success");
+                // }
             },
             cache: false,
             contentType: false,

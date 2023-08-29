@@ -318,6 +318,7 @@ class ImageProcess:
             time.sleep(1)
             df_report = self.chatGPT_run(idx,df_report)
 
+        # df_report.to_csv('./check_flask/views/reports/report_' + '_'.join(self.date_created) + '.csv')
         
         print("Process completed successfully.") 
         

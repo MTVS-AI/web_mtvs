@@ -1,5 +1,5 @@
 from flask import Flask
-from .views import main_views, myhome_views
+from .views import main_views, myhome_views, maps_views
 
 def create_app():
     app = Flask(__name__)
@@ -8,5 +8,6 @@ def create_app():
     # Blueprints 등록
     app.register_blueprint(main_views.bp)
     app.register_blueprint(myhome_views.bp)
+    app.register_blueprint(maps_views.bp)
 
     return app
